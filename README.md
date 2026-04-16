@@ -1,15 +1,12 @@
 # Cartelera de Hype Tecnológico
 
-Prueba técnica para SunDevs. Es una app fullstack que toma datos de un mock de la API de YouTube, les calcula un índice de hype y los muestra en una cartelera.
+Prueba técnica para SunDevs. Una app fullstack que toma un mock de la API de YouTube, calcula un índice de hype para cada video y los muestra en una cartelera con el de mayor hype destacado como la Joya de la Corona.
 
-El backend está hecho con NestJS y el frontend con React + TypeScript.
+Backend en NestJS, frontend en React + TypeScript.
 
 ## Estructura
-
-```
 backend/    → API en NestJS (GET /api/videos)
 frontend/   → Interfaz en React + TypeScript
-```
 
 ## Requisitos
 
@@ -18,7 +15,7 @@ frontend/   → Interfaz en React + TypeScript
 
 ## Cómo levantar
 
-### Backend (puerto 3000)
+**Backend (puerto 3000)**
 
 ```bash
 cd backend
@@ -26,9 +23,9 @@ npm install
 npm run start:dev
 ```
 
-La API queda en `http://localhost:3000/api/videos`
+La API queda disponible en `http://localhost:3000/api/videos`.
 
-### Frontend (puerto 3001)
+**Frontend (puerto 3001)**
 
 ```bash
 cd frontend
@@ -36,15 +33,15 @@ npm install
 npm start
 ```
 
-Se abre en `http://localhost:3001`. El backend tiene que estar corriendo antes.
+Se abre en `http://localhost:3001`. El backend tiene que estar corriendo primero.
 
-## Verificar la API
+## Verificar que funciona
 
 ```bash
 curl http://localhost:3000/api/videos
 ```
 
-Devuelve un array de 50 videos con: `thumbnail`, `title`, `author`, `publishedAt`, `hypeLevel`, `isCrown`.
+Devuelve un array de 50 videos, cada uno con: `thumbnail`, `title`, `author`, `publishedAt`, `hypeLevel` e `isCrown`.
 
 ## Tests
 
@@ -53,4 +50,4 @@ cd backend
 npm run test
 ```
 
-Hay tests para el servicio de videos, básicamente validan que el cálculo de hype funcione bien, que el crown quede de primero y los casos donde el hype debería dar 0.
+Validan el cálculo de hype, que la Joya de la Corona quede de primera en el array y los casos donde el hype debería dar 0.
