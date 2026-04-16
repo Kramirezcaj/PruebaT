@@ -1,4 +1,4 @@
-Decisiones técnicas
+#Decisiones técnicas
 Enfoque general
 La estructura es: backend en NestJS que procesa el JSON y expone el endpoint, frontend en React que lo consume y renderiza. Los separé en dos carpetas (backend/ y frontend/) cada una con su propio package.json, principalmente porque así es más fácil de levantar por partes mientras desarrollaba y lo veo más ordenado.
 Backend
