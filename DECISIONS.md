@@ -46,7 +46,10 @@ App.css                  → Estilos
 ## Supuestos
 
 - El mock es el dataset completo, no hay paginación.
-- Comentarios desactivados = `commentCount` no existe en `statistics`, no que valga `"0"`.
-- Si hay empate en hype gana el primero en el array.
-- Las fechas relativas se calculan contra el momento actual, así que van a cambiar con el tiempo.
-- Sin caché ni base de datos, el JSON se lee en cada request.
+
+## Uso de IA
+
+Usé ChatGPT como referencia puntual para ideas de estilos CSS, principalmente para la sección visual. Las sugerencias las tomé como punto de partida y las ajusté a lo que quería lograr visualmente.
+
+Las animaciones de entrada fueron inspiradas en el análisis visual de la página de SunDevs (https://www.sundevs.com/), tomando como referencia sus transiciones.
+
