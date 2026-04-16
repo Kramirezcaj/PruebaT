@@ -62,20 +62,4 @@ frontend/src/
 - La fecha se calcula contra la fecha actual, así que los textos relativos cambian con el tiempo.
 - No hay caché ni base de datos, el JSON se lee en cada request.
 
-## Problemas que encontré
 
-- **Ruta del JSON en build:** NestJS compila a `dist/`, entonces `__dirname` apunta a `dist/videos/` y no a `src/videos/`. Tuve que ajustar el path con `path.join(__dirname, '..', 'mock-youtube-api.json')` para que resolviera bien.
-
-- **División por cero:** El video `vid_007` tiene 0 vistas, 0 likes y 0 comentarios. Agregué un guard antes de la división.
-
-## Uso de IA
-
-Usé Claude de Anthropic como apoyo durante el desarrollo. Los prompts más relevantes:
-
-1. Le pasé las reglas de negocio del hype y le pedí ayuda para estructurar el servicio de NestJS, sobre todo para validar los casos borde (commentCount faltante, vistas en cero, tutorial en mayúsculas mixtas).
-
-2. Le pedí que me ayudara con el componente de React para consumir la API y mostrar el grid, incluyendo el manejo de loading/error y el diseño visual de la Joya de la Corona.
-
-3. Iteré bastante sobre el CSS y el diseño visual: la paleta de colores, el layout de las tarjetas, las animaciones de scroll, y la sección destacada de la corona.
-
-Todo el código generado lo revisé y ajusté antes de incluirlo.
