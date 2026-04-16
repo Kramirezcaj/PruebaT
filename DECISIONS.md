@@ -1,65 +1,40 @@
-# Decisiones técnicas
+Decisiones técnicas
+Enfoque general
+La estructura es: backend en NestJS que procesa el JSON y expone el endpoint, frontend en React que lo consume y renderiza. Los separé en dos carpetas (backend/ y frontend/) cada una con su propio package.json, principalmente porque así es más fácil de levantar por partes mientras desarrollaba y lo veo más ordenado.
+Backend
+Para leer el mock usé fs.readFileSync directo en cada request.
+El cálculo del hype fue con la fórmula (likes + comentarios) / vistas, pero hay tres casos que tuve que manejar:
 
-## Enfoque general
+Si commentCount no existe en statistics (no es que valga "0", sino que directamente no está), el hype es 0. Asumí que eso significa comentarios desactivados.
+Si el título tiene "tutorial" en cualquier combinación de mayúsculas, el hype se duplica. Lo resolví con una regex /tutorial/i, que es lo más limpio para ese caso.
+Si las vistas son 0, el hype queda en 0 también para no dividir entre cero y explotar.
 
-Separé la solución en dos apps independientes: el backend en NestJS se encarga de leer el JSON mock, aplicar las reglas de negocio y exponer un endpoint limpio. El frontend en React consume ese endpoint y renderiza la cartelera.
-
-Los dos proyectos viven como carpetas hermanas (`backend/` y `frontend/`), cada uno con su propio `package.json`.
-
-## Decisiones principales
-
-### Backend
-
-**Lectura del JSON:** Uso `fs.readFileSync` para leer el mock en cada request. En un caso real esto sería una llamada HTTP a la API de YouTube, pero para el ejercicio leer del disco es lo más directo.
-
-**Cálculo del hype:**
-```
-hypeLevel = (likes + comentarios) / vistas
-```
-- Si `commentCount` no existe como propiedad en `statistics`, el hype es 0 (comentarios desactivados).
-- Si el título contiene "tutorial" (sin importar mayúsculas/minúsculas), el hype se multiplica por 2. Usé una regex `/tutorial/i` para cubrirlo.
-- Si las vistas son 0, el hype es 0 para evitar dividir entre cero.
-- Redondeo a 4 decimales.
-
-**Fecha relativa:** Implementada con JS puro, sin librerías. Calculo la diferencia en milisegundos y voy comparando contra cada unidad de tiempo (minutos, horas, días, meses, años). Devuelve strings como "Hace 2 meses" o "Hace 5 días".
-
-**Orden de respuesta:** El video corona va primero, después el resto ordenado de mayor a menor hype. Así el frontend no necesita reordenar.
-
-**CORS:** Habilitado para `http://localhost:3001` que es donde corre el dev server de React.
-
-### Frontend
-
-Usé TypeScript en todo el frontend. El estado lo manejo con `useState` y `useEffect` directamente, sin Redux ni nada externo porque solo es un fetch y mostrar datos.
-
-La Joya de la Corona se renderiza aparte del grid con su propio componente y sección visual destacada. El resto de videos se muestra en tarjetas tipo statement con numeración, organizados en secciones (Top Trending, Rising, Todos los videos).
-
-Para los estados de carga y error: un spinner CSS para loading y un mensaje con el código de error si falla la conexión.
-
-Todo el CSS está hecho a mano, sin librerías de UI. Tema claro con acentos de color y animaciones de entrada al hacer scroll con IntersectionObserver.
-
-## Organización del proyecto
-
-```
+El resultado lo redondeo a 4 decimales.
+La fecha la calculé con la diferencia en milisegundos contra Date.now() y fui comparando contra cada unidad (minutos, horas, días, meses, años) de mayor a menor.
+El orden lo resuelvo en el backend: la Joya de la Corona va primero, el resto ordenado de mayor a menor hype. Así el frontend recibe el array listo y no tiene que hacer nada extra.
+CORS lo habilité solo para http://localhost:3001 que es donde corre React en dev.
+Frontend
+Usé TypeScript en todo. Para el estado, useState + useEffect fueron suficientes — consideré si valía meterle algún state manager pero para un solo fetch y renderizar datos sería matar una mosca con un cañón.
+La Joya de la Corona tiene su propio componente y sección separada visualmente del grid. El resto de videos los organicé en secciones (Top Trending, Rising, el resto) porque me pareció más interesante que una grilla plana.
+Los estados de carga y error los manejo con un spinner CSS y un mensaje con el código de error respectivamente.
+Las animaciones de entrada las hice con IntersectionObserver para que los elementos aparezcan al hacer scroll.
+Organización
 backend/src/
   videos/
-    videos.controller.ts   → Definición de la ruta GET /api/videos
-    videos.service.ts      → Lógica de negocio (hype, fechas, ordenamiento)
-    videos.module.ts       → Módulo de NestJS
-  app.module.ts            → Módulo raíz
-  main.ts                  → Bootstrap y config de CORS
-  mock-youtube-api.json    → Mock de la API de YouTube
+    videos.controller.ts   → Ruta GET /api/videos
+    videos.service.ts      → Lógica de hype, fechas y ordenamiento
+    videos.module.ts       → Módulo NestJS
+  app.module.ts
+  main.ts                  → Bootstrap y CORS
+  mock-youtube-api.json
 
 frontend/src/
-  App.tsx                  → Componente principal con fetch, estados y render
-  App.css                  → Estilos completos
-```
+  App.tsx                  → Fetch, estados y render principal
+  App.css                  → Estilos
+Supuestos
 
-## Supuestos
-
-- El mock JSON es el dataset completo, no hay paginación.
-- "Comentarios desactivados" = la propiedad `commentCount` no existe en `statistics` (no es que valga "0").
-- Si hay empate en hype, gana el primero que aparezca en el array.
-- La fecha se calcula contra la fecha actual, así que los textos relativos cambian con el tiempo.
-- No hay caché ni base de datos, el JSON se lee en cada request.
-
-
+El mock es el dataset completo, no hay paginación.
+Comentarios desactivados = commentCount no existe en statistics, no que valga "0".
+Si hay empate en hype gana el primero en el array.
+Las fechas relativas se calculan contra el momento actual, así que van a cambiar con el tiempo.
+Sin caché ni base de datos, el JSON se lee en cada request.
